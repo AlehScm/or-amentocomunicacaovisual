@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Quote, QuoteItem } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 const INTEREST_RATE = 0.15; // 15% de taxa de juros
 
@@ -34,6 +35,10 @@ export default function QuoteDetailsPage() {
     const [isEditing, setIsEditing] = useState(false);
     const [editedQuote, setEditedQuote] = useState<Quote | null>(null);
     const [selectedMaterial, setSelectedMaterial] = useState('');
+    
+    const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
+    const [installments, setInstallments] = useState(10);
+
 
     useEffect(() => {
         if (originalQuote) {
@@ -82,6 +87,7 @@ export default function QuoteDetailsPage() {
             return;
         }
         setIsExporting(true);
+        setIsExportDialogOpen(false);
         try {
             const canvas = await html2canvas(contentElement, { scale: 3, useCORS: true, logging: true, allowTaint: true });
             const imgData = canvas.toDataURL('image/png');
@@ -172,6 +178,7 @@ export default function QuoteDetailsPage() {
                     ref={pdfRef}
                     quote={originalQuote} 
                     materials={materials} 
+                    installments={installments}
                  />
              </div>
 
@@ -191,10 +198,49 @@ export default function QuoteDetailsPage() {
                      ) : (
                         <>
                             <Button onClick={() => setIsEditing(true)}><Edit className="mr-2" />Editar</Button>
-                            <Button onClick={handleExportPdf} disabled={isExporting} variant="outline">
-                                <FileDown className="mr-2" />
-                                {isExporting ? 'Exportando...' : 'Exportar PDF'}
-                            </Button>
+                            <Dialog open={isExportDialogOpen} onOpenChange={setIsExportDialogOpen}>
+                                <DialogTrigger asChild>
+                                    <Button variant="outline">
+                                        <FileDown className="mr-2" />
+                                        Exportar PDF
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Opções de Exportação</DialogTitle>
+                                        <DialogDescription>
+                                            Configure as opções para o PDF a ser gerado.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="grid gap-4 py-4">
+                                        <div className="grid grid-cols-4 items-center gap-4">
+                                            <Label htmlFor="installments" className="text-right">
+                                                Parcelas
+                                            </Label>
+                                            <Select
+                                                value={String(installments)}
+                                                onValueChange={(value) => setInstallments(Number(value))}
+                                            >
+                                                <SelectTrigger className="col-span-3">
+                                                    <SelectValue placeholder="Selecione o número de parcelas" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {[...Array(12)].map((_, i) => (
+                                                        <SelectItem key={i + 1} value={String(i + 1)}>
+                                                            {i + 1}x sem juros
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+                                    <DialogFooter>
+                                        <Button onClick={handleExportPdf} disabled={isExporting}>
+                                            {isExporting ? 'Exportando...' : 'Confirmar e Gerar PDF'}
+                                        </Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
                         </>
                      )}
                 </div>

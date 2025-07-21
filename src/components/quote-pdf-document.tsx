@@ -9,11 +9,13 @@ import { useCompanyInfo } from '@/hooks/use-app-data';
 interface QuotePdfDocumentProps {
     quote: Quote;
     materials: Material[];
+    installments: number;
 }
 
 export const QuotePdfDocument = React.forwardRef<HTMLDivElement, QuotePdfDocumentProps>(({ 
     quote, 
     materials,
+    installments,
 }, ref) => {
     const { companyLogo } = useCompanyInfo();
     if (!quote) return null;
@@ -24,7 +26,7 @@ export const QuotePdfDocument = React.forwardRef<HTMLDivElement, QuotePdfDocumen
         <div ref={ref} className="bg-white text-black font-sans" style={{ width: `${pageWidth}px`, minHeight: '1123px', padding: '40px', display: 'flex', flexDirection: 'column' }}>
             {/* Header */}
             <header className="flex justify-between items-start mb-8">
-                <div style={{width: '150px', height: '150px'}} className="relative">
+                <div style={{width: '150px', height: '75px'}} className="relative">
                      <Image 
                         src={companyLogo || "https://placehold.co/150x75.png"}
                         alt="Company Logo"
@@ -61,7 +63,7 @@ export const QuotePdfDocument = React.forwardRef<HTMLDivElement, QuotePdfDocumen
                     <p className="font-bold text-base">Prazo: a combinar</p>
                     <div className="text-gray-800">
                         <p>
-                            Condições de pagamento: cartão de crédito em até 10x sem juros.
+                            Condições de pagamento: cartão de crédito em até {installments}x sem juros.
                             <br />
                             <span style={{ paddingLeft: '8em' }}>50% sinal e o restante na entrega.</span>
                             <br />
@@ -93,7 +95,7 @@ export const QuotePdfDocument = React.forwardRef<HTMLDivElement, QuotePdfDocumen
             </main>
             
             {/* Footer */}
-            <footer className="pt-4">
+            <footer className="mt-auto pt-10">
                 <div className="flex justify-end items-end">
                     <div className="text-right text-xs text-gray-600 space-y-1">
                         <p className="font-bold text-gray-800">ACM e Letras Comunicação Visual Ltda.</p>
