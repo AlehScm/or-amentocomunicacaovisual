@@ -11,6 +11,7 @@ export interface Deal {
   clientName: string;
   value: number;
   status: string; // DealStatus ID
+  relatedQuoteId?: string;
 }
 
 export type PricingType = 'per_m2' | 'per_unit';

@@ -22,6 +22,7 @@ export interface AppContextType {
   deleteMaterial: (id: string) => void;
   // Quotes
   addQuote: (quote: Omit<Quote, "id" | "quoteNumber" | "createdAt">) => void;
+  updateQuote: (id: string, updatedQuote: Partial<Omit<Quote, "id">>) => void;
   deleteQuote: (id: string) => void;
   // Data Management
   exportData: () => void;
@@ -87,9 +88,9 @@ export const useMaterials = () => {
 }
 
 export const useQuotes = () => {
-  const { data, addQuote, deleteQuote } = useAppDataContext()
+  const { data, addQuote, updateQuote, deleteQuote } = useAppDataContext()
   const getQuoteById = (id: string) => data.quotes.find(q => q.id === id);
-  return { quotes: data.quotes, addQuote, deleteQuote, getQuoteById }
+  return { quotes: data.quotes, addQuote, updateQuote, deleteQuote, getQuoteById }
 }
 
 export const useCompanyInfo = () => {

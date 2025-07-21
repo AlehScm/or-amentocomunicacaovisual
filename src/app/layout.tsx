@@ -141,6 +141,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         clientName: quote.companyName,
         value: quote.total,
         status: budgetStatus.id,
+        relatedQuoteId: newQuote.id,
       };
 
       return { 
@@ -151,10 +152,38 @@ export function AppProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const updateQuote = (id: string, updatedQuoteData: Partial<Omit<Quote, 'id'>>) => {
+    updateData(prevData => {
+        const quotes = prevData.quotes.map(q => 
+            q.id === id ? { ...q, ...updatedQuoteData, id: q.id } : q
+        );
+        
+        const updatedQuote = quotes.find(q => q.id === id);
+        let deals = prevData.deals;
+
+        if (updatedQuote) {
+            deals = prevData.deals.map(d => {
+                if (d.relatedQuoteId === id) {
+                    return {
+                        ...d,
+                        title: `Orçamento #${updatedQuote.quoteNumber}`,
+                        clientName: updatedQuote.companyName,
+                        value: updatedQuote.total,
+                    };
+                }
+                return d;
+            });
+        }
+
+        return { ...prevData, quotes, deals };
+    });
+  };
+
   const deleteQuote = (id: string) => {
     updateData(prevData => ({
       ...prevData,
       quotes: prevData.quotes.filter(q => q.id !== id),
+      deals: prevData.deals.filter(d => d.relatedQuoteId !== id),
     }));
   };
   
@@ -255,6 +284,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     updateMaterial,
     deleteMaterial,
     addQuote,
+    updateQuote,
     deleteQuote,
     exportData,
     importData,
