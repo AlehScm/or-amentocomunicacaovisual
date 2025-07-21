@@ -24,7 +24,7 @@ export const QuotePdfDocument = React.forwardRef<HTMLDivElement, QuotePdfDocumen
         <div ref={ref} className="bg-white text-black font-sans" style={{ width: `${pageWidth}px`, minHeight: '1123px', padding: '40px', display: 'flex', flexDirection: 'column' }}>
             {/* Header */}
             <header className="flex justify-between items-start mb-8">
-                <div style={{width: '150px', height: '75px'}} className="relative">
+                <div style={{width: '150px', height: '150px'}} className="relative">
                      <Image 
                         src={companyLogo || "https://placehold.co/150x75.png"}
                         alt="Company Logo"
@@ -93,7 +93,7 @@ export const QuotePdfDocument = React.forwardRef<HTMLDivElement, QuotePdfDocumen
             </main>
             
             {/* Footer */}
-            <footer className="mt-auto pt-10">
+            <footer className="pt-4">
                 <div className="flex justify-end items-end">
                     <div className="text-right text-xs text-gray-600 space-y-1">
                         <p className="font-bold text-gray-800">ACM e Letras Comunicação Visual Ltda.</p>
